@@ -1,6 +1,6 @@
 # crypto_watch
 
-A new Flutter project.
+A crypto price ticker app.
 
 ## Getting Started
 
