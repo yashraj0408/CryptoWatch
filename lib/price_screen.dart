@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'coin_data.dart';
 import 'package:flutter/cupertino.dart';
+import 'services/network.dart';
 
 class PriceScreen extends StatefulWidget {
   @override
@@ -32,7 +33,36 @@ class _PriceScreenState extends State<PriceScreen> {
   //   return dropDownItems;
   // }
 
-  String? selectedCurrency = 'EUR';
+  String selectedCurrency = 'INR';
+
+  String btcValue = '?';
+  String ethValue = '?';
+  String cotiValue = '?';
+
+  // CoinData coinData = CoinData();
+
+  void getData() async {
+    try {
+      dynamic data = await CoinData().getCoinData();
+      setState(() {
+        btcValue =
+            data['bitcoin'][selectedCurrency.toLowerCase()].toStringAsFixed(0);
+        ethValue =
+            data['ethereum'][selectedCurrency.toLowerCase()].toStringAsFixed(0);
+        cotiValue =
+            data['coti'][selectedCurrency.toLowerCase()].toStringAsFixed(4);
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,7 +70,7 @@ class _PriceScreenState extends State<PriceScreen> {
         title: Text('🤑 Coin Ticker'),
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Padding(
@@ -54,7 +84,49 @@ class _PriceScreenState extends State<PriceScreen> {
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
                 child: Text(
-                  '1 BTC = ? $selectedCurrency',
+                  '1 BTC = $btcValue $selectedCurrency',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
+            child: Card(
+              color: Colors.lightBlueAccent,
+              elevation: 5.0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
+                child: Text(
+                  '1 ETH = $ethValue $selectedCurrency',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
+            child: Card(
+              color: Colors.lightBlueAccent,
+              elevation: 5.0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
+                child: Text(
+                  '1 COTI = $cotiValue $selectedCurrency',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 20.0,
@@ -74,6 +146,7 @@ class _PriceScreenState extends State<PriceScreen> {
               onSelectedItemChanged: (selectedItem) {
                 setState(() {
                   selectedCurrency = currenciesList[selectedItem];
+                  getData();
                 });
               },
               children: getCurrencyList(),
